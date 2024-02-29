@@ -35,6 +35,10 @@ int main()
 {
 	int hinverted = 0;
 	int vinverted = 0;
+	
+	// Degree of rotation, from 0 -> 359
+	int direction = 0;
+	int toggle = 0;
 	int hmoved = 0;
 	int vmoved = 0;
 	uint16_t x = 50;
@@ -47,6 +51,9 @@ int main()
 	putImage(20,80,12,16,dg1,0,0);
 	while(1)
 	{
+		if (direction >= 360) {
+			direction = direction - 360;
+		}
 		hmoved = vmoved = 0;
 		//hinverted = vinverted = 0;
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
