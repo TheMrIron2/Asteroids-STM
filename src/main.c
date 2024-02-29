@@ -120,12 +120,12 @@ int main()
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
 			if (isInside(20,80,12,16,x,y) || isInside(20,80,12,16,x+12,y) || isInside(20,80,12,16,x,y+16) || isInside(20,80,12,16,x+12,y+16) )
 			{
-				printTextX2("DEAN IS", 10, 100, RGBToWord(0xff,0xff,0), 0);
-				printTextX2("A BOZO", 10, 115, RGBToWord(0xff,0,0), 0);
+				printText("DEAN IS", 10, 100, RGBToWord(0xff,0xff,0), 0);
+				printText("A BOZO", 10, 115, RGBToWord(0xff,0,0), 0);
 			}
 		}
-		printNumberX2(x, 10, 10, RGBToWord(0xff, 0xff, 0xff), 0);
-		printNumberX2(y, 10, 20, RGBToWord(0xff, 0xff, 0xff), 0);
+		printNumber(x, 10, 10, RGBToWord(0xff, 0xff, 0xff), 0);
+		printNumber(y, 10, 20, RGBToWord(0xff, 0xff, 0xff), 0);
 		delay(50);
 	}
 	return 0;
