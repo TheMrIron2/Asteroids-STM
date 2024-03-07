@@ -58,43 +58,38 @@ int main()
 	putImage(x,y,16,16,player_hor,0,0);
 	while(1)
 	{
-		if (direction > 1) {
-			direction = direction - 2;
+		if (direction > 360) {
+			direction = direction - 360;
 		}
-		if (direction < -1) {
-			direction = direction + 2;
+		if (direction < 0) {
+			direction = direction + 360;
 		}
 		hmoved = vmoved = 0;
 		//hinverted = vinverted = 0;
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
-			direction = direction + 0.1;
+			direction = direction + 10;
 			hmoved = 1;				
 		}
 		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
 		{			
-			direction = direction - 0.1;
+			direction = direction - 10;
 			hmoved = 1;	
 		}
 		/*if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
 		{
-			y = y + 1;			
-			vmoved = 1;
-			vinverted = 1;
-
-			// Wraps screen
-			if (y > 140)
-			{
-				y = 1;
-			}
+			
 		}*/
 		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
 		{			
-			// Move x
-			x = x + (acos(direction) * 2);
-			// Move y
-			y = y + (asin(direction) * 2);
+			// Convert angle to radians
+			double angleRadians = direction * (3.141592653589) / 180.0;
+
+			// Calculate change in x and y using trigonometric functions
+			x = x + (2 * cos(angleRadians));
+			y = y + (2 * sin(angleRadians));
 			vmoved = 1;
+			hmoved = 1;
 		}
 		
 		// Wraps screen
@@ -102,9 +97,17 @@ int main()
 		{
 			y = 140;
 		}
+		if (y > 140)
+		{
+			y = 1;
+		}
 		if (x < 2)
 		{
 			x = 120;
+		}
+		if (x > 120)
+		{
+			x = 1;
 		}
 
 		if ((vmoved) || (hmoved))
@@ -130,8 +133,7 @@ int main()
 		}
 		printNumber(x, 10, 10, RGBToWord(0xff, 0xff, 0xff), 0);
 		printNumber(y, 10, 20, RGBToWord(0xff, 0xff, 0xff), 0);
-		printNumber((direction * 100), 10, 30, RGBToWord(0xff, 0xff, 0xff), 0);
-		printNumber((x + (acos(direction) * 2)), 10, 40, RGBToWord(0xff, 0xff, 0xff), 0);
+		printNumber((direction), 10, 30, RGBToWord(0xff, 0xff, 0xff), 0);
 		delay(50);
 	}
 	return 0;
