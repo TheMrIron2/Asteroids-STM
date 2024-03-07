@@ -31,6 +31,11 @@ int main()
 	// Y position of the player
 	uint16_t y = 50;
 
+	// Delta X speed of the player
+	float delta_x = 0;
+	// Delta Y speed of the player
+	float delta_y = 0;
+
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	initClock();
@@ -65,14 +70,27 @@ int main()
 		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
 		{			
 			// Convert angle to radians
-			double angleRadians = direction * (3.141592653589) / 180.0;
+			double angleRadians = direction * ((3.141592653589) / 180.0);
 
 			// Calculate change in x and y using trigonometric functions
-			x = x + (2 * cos(angleRadians));
-			y = y + (2 * sin(angleRadians));
+			delta_x = delta_x + (1 * cos(angleRadians));
+			delta_y = delta_y + (1 * sin(angleRadians));
+			
 			vmoved = 1;
 			hmoved = 1;
 		}
+		else {
+			if (delta_x > 0) {
+				delta_x = delta_x - 1;
+			}
+			if (delta_y > 0) {
+				delta_y = delta_y - 1;
+			}
+
+		}
+
+		x += delta_x;
+		y += delta_y;
 		
 		// Wraps screen
 		if (y < 2)
