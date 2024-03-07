@@ -1,5 +1,6 @@
 #include <stm32f031x6.h>
 #include <stdio.h>
+#include <math.h>
 #include "display.h"
 void initClock(void);
 void initSysTick(void);
@@ -36,51 +37,46 @@ int main()
 	int hinverted = 0;
 	int vinverted = 0;
 	
-	// Degree of rotation, from 0 -> 359
-	int direction = 0;
+	// Degree of rotation, from -1 -> 1
+	float direction = 0;
+
 	int toggle = 0;
 	int hmoved = 0;
 	int vmoved = 0;
+
+	// X position of the player
 	uint16_t x = 50;
+	// Y position of the player
 	uint16_t y = 50;
+
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	initClock();
 	initSysTick();
 	setupIO();
 	putImage(20,80,12,16,dg1,0,0);
+	putImage(x,y,16,16,player_hor,0,0);
 	while(1)
 	{
-		if (direction >= 360) {
-			direction = direction - 360;
+		if (direction > 1) {
+			direction = direction - 2;
+		}
+		if (direction < -1) {
+			direction = direction + 2;
 		}
 		hmoved = vmoved = 0;
 		//hinverted = vinverted = 0;
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
-			x = x + 1;
-			hmoved = 1;
-
-			// Wraps screen
-			if (x > 110)
-			{
-				x = 1;
-			}					
+			direction = direction + 0.1;
+			hmoved = 1;				
 		}
 		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
 		{			
-			x = x - 1;
-			hmoved = 1;
-
-			// Wraps screen
-			if (x < 2)
-			{
-				x = 120;
-				hmoved = 1;
-				//hinverted = 1;
-			}		
+			direction = direction - 0.1;
+			hmoved = 1;	
 		}
-		if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
+		/*if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
 		{
 			y = y + 1;			
 			vmoved = 1;
@@ -91,19 +87,26 @@ int main()
 			{
 				y = 1;
 			}
-		}
+		}*/
 		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
 		{			
-			y = y - 1;
+			// Move x
+			x = x + (acos(direction) * 2);
+			// Move y
+			y = y + (asin(direction) * 2);
 			vmoved = 1;
-			vinverted = 0;
-
-			// Wraps screen
-			if (y < 2)
-			{
-				y = 140;
-			}
 		}
+		
+		// Wraps screen
+		if (y < 2)
+		{
+			y = 140;
+		}
+		if (x < 2)
+		{
+			x = 120;
+		}
+
 		if ((vmoved) || (hmoved))
 		{
 			// only redraw if there has been some movement (reduces flicker)
@@ -127,6 +130,8 @@ int main()
 		}
 		printNumber(x, 10, 10, RGBToWord(0xff, 0xff, 0xff), 0);
 		printNumber(y, 10, 20, RGBToWord(0xff, 0xff, 0xff), 0);
+		printNumber((direction * 100), 10, 30, RGBToWord(0xff, 0xff, 0xff), 0);
+		printNumber((x + (acos(direction) * 2)), 10, 40, RGBToWord(0xff, 0xff, 0xff), 0);
 		delay(50);
 	}
 	return 0;
