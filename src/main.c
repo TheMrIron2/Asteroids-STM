@@ -37,7 +37,7 @@ int main()
 	initSysTick();
 	setupIO();
 	putImage(20,80,12,16,dg1,0,0);
-	putImage(x,y,16,16,player_hor,0,0);
+	putImage(x,y,16,16,player_90,0,0);
 	while(1)
 	{
 		if (direction > 360) {
@@ -100,7 +100,7 @@ int main()
 			oldy = y;					
 			if (hmoved) // sprites displayed with this function have an issue if hinverted is removed...
 			{
-				putImage(x,y,16,16,player_hor,hinverted,0);
+				putImage(x,y,16,16,player_,hinverted,0);
 			}
 			else
 			{
