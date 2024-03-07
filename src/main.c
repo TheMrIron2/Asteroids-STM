@@ -1,7 +1,7 @@
 #include <stm32f031x6.h>
 #include <stdio.h>
 #include <math.h>
-#include <../assets/assets.h>
+#include "../assets/assets.h"
 #include "display.h"
 void initClock(void);
 void initSysTick(void);
