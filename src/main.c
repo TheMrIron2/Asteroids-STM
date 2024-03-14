@@ -17,7 +17,6 @@ volatile uint32_t milliseconds;
 
 int main()
 {
-	bool game_started = 0;	
 	int hinverted = 0;
 	int vinverted = 0;
 	
@@ -43,7 +42,20 @@ int main()
 	initClock();
 	initSysTick();
 	setupIO();
-	//putImage(20,80,12,16,dg1,0,0);
+
+	bool menu = 1;
+
+	printText("Prss right", 10, 100, RGBToWord(0xff,0xff,0), 0);
+
+	while(menu == 1)
+	{
+		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
+		{					
+			menu = 0;
+		}
+	}
+
+	bool game_started = 0;	
 	const char *startText="Start Game";
 	int start_txt_x = 30;
 	int start_txt_y = 100;
