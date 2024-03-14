@@ -52,6 +52,7 @@ int main()
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
 			menu = 0;
+			fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0x0);
 		}
 	}
 
@@ -159,6 +160,7 @@ int main()
 					|| isInside(start_txt_x, start_txt_y, start_txt_width, start_txt_height,x+12,y+16) )
 				{
 					game_started = 1;
+					fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0x0);
 					printText("DEAN IS", 10, 100, RGBToWord(0xff,0xff,0), 0);
 					printText("A BOZO", 10, 115, RGBToWord(0xff,0,0), 0);
 				}
