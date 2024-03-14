@@ -3,6 +3,7 @@
 #include <math.h>
 #include "../assets/assets.h"
 #include "display.h"
+#include <stdbool.h>
 void initClock(void);
 void initSysTick(void);
 void SysTick_Handler(void);
@@ -16,6 +17,7 @@ volatile uint32_t milliseconds;
 
 int main()
 {
+	bool game_started = 0;	
 	int hinverted = 0;
 	int vinverted = 0;
 	
@@ -41,7 +43,15 @@ int main()
 	initClock();
 	initSysTick();
 	setupIO();
-	putImage(20,80,12,16,dg1,0,0);
+	//putImage(20,80,12,16,dg1,0,0);
+	const char *startText="Start Game";
+	int start_txt_x = 30;
+	int start_txt_y = 100;
+	printText(startText, start_txt_x, start_txt_y, RGBToWord(0xff,0xff,0), 0);
+	int start_txt_len=(int) mystrlen(startText);
+	int start_txt_width = start_txt_len * 7; // characters are 5 pixels + 2 for space
+    int start_txt_height = 7;
+
 	putImage(x,y,16,16,player_90,0,0);
 	while(1)
 	{
@@ -118,18 +128,30 @@ int main()
 			oldy = y;					
 			if (hmoved) // sprites displayed with this function have an issue if hinverted is removed...
 			{
-				putImage(x,y,16,16,player_,hinverted,0);
+				putImage(x,y,16,16,player_90,hinverted,0);
 			}
 			else
 			{
 				putImage(x,y,16,16,player,0,vinverted);
 			}
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
-			if (isInside(20,80,12,16,x,y) || isInside(20,80,12,16,x+12,y) || isInside(20,80,12,16,x,y+16) || isInside(20,80,12,16,x+12,y+16) )
+			if (game_started)
 			{
-				printText("DEAN IS", 10, 100, RGBToWord(0xff,0xff,0), 0);
-				printText("A BOZO", 10, 115, RGBToWord(0xff,0,0), 0);
+				// Draw astroids
 			}
+			else
+			{
+				if (isInside(start_txt_x, start_txt_y, start_txt_width, start_txt_height,x,y) 
+					|| isInside(start_txt_x, start_txt_y, start_txt_width, start_txt_height,x+12,y) 
+					|| isInside(start_txt_x, start_txt_y, start_txt_width, start_txt_height,x,y+16) 
+					|| isInside(start_txt_x, start_txt_y, start_txt_width, start_txt_height,x+12,y+16) )
+				{
+					game_started = 1;
+					printText("DEAN IS", 10, 100, RGBToWord(0xff,0xff,0), 0);
+					printText("A BOZO", 10, 115, RGBToWord(0xff,0,0), 0);
+				}
+			}
+
 		}
 		printNumber(x, 10, 10, RGBToWord(0xff, 0xff, 0xff), 0);
 		printNumber(y, 10, 20, RGBToWord(0xff, 0xff, 0xff), 0);
