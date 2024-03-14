@@ -93,7 +93,7 @@ int main()
 		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
 		{			
 			// Convert angle to radians
-			double angleRadians = direction * ((3.141592653589) / 180.0);
+			double angleRadians = direction * ((3.142) / 180.0);
 
 			// Calculate change in x and y using trigonometric functions
 			delta_x = delta_x + (1 * cos(angleRadians));
@@ -114,6 +114,8 @@ int main()
 
 		x += delta_x;
 		y += delta_y;
+
+		//drawRectangle((x + delta_x), (y + delta_y), 3, 3, RGBToWord(0xff, 0, 0)); attempt at debug square
 		
 		// Wraps screen
 		if (y < 2)
@@ -169,7 +171,14 @@ int main()
 		}
 		printNumber(x, 10, 10, RGBToWord(0xff, 0xff, 0xff), 0);
 		printNumber(y, 10, 20, RGBToWord(0xff, 0xff, 0xff), 0);
-		printNumber((direction), 10, 30, RGBToWord(0xff, 0xff, 0xff), 0);
+		printNumber(direction, 10, 30, RGBToWord(0xff, 0xff, 0xff), 0);
+		printNumber(delta_x, 10, 40, RGBToWord(0xff, 0xff, 0xff), 0);
+		printNumber(delta_y,  10, 50, RGBToWord(0xff, 0xff, 0xff), 0);
+		printText("X POS", 50, 10, RGBToWord(0xff,0xff,0), 0);
+		printText("Y POS", 50, 20, RGBToWord(0xff,0xff,0), 0);
+		printText("DIR", 50, 30, RGBToWord(0xff,0xff,0), 0);
+		printText("DELTA X", 50, 40, RGBToWord(0xff,0xff,0), 0);
+		printText("DELTA Y", 50, 50, RGBToWord(0xff,0xff,0), 0);
 		delay(50);
 	}
 	return 0;
