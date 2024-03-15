@@ -1,12 +1,14 @@
 #include <stm32f031x6.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
+
 #include "../assets/assets.h"
 #include "musical_notes.h"
 #include "sound.h"
 #include "display.h"
 #include "player.h"
-#include <stdbool.h>
+
 void initClock(void);
 void initSysTick(void);
 void SysTick_Handler(void);
