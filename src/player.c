@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "display.h"
 #include "player.h"
-//#include "../assets/assets.h"
 
 void init_player(struct player* p) {
 	
@@ -70,10 +69,6 @@ void shoot_bullet(struct player* p) {
 }
 
 void draw_player(struct player* p) {
-
-	drawLine(p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, 0xff);
-	drawLine(p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, 0xff);
-	drawLine(p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, 0xff);
 	
 	int i = 0;
 	

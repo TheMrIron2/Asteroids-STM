@@ -29,28 +29,7 @@ struct player lives[LIVES];			//Player lives left
 
 int main()
 {
-	int hinverted = 0;
-	int vinverted = 0;
 	
-	// Degree of rotation, from 0 -> 360
-	float direction = 0;
-
-	//int toggle = 0; // unused
-	int hmoved = 0;
-	int vmoved = 0;
-
-	// X position of the player
-	uint16_t x = 50;
-	// Y position of the player
-	uint16_t y = 50;
-
-	// Delta X speed of the player
-	float delta_x = 0;
-	// Delta Y speed of the player
-	float delta_y = 0;
-
-	uint16_t oldx = x;
-	uint16_t oldy = y;
 	initClock();
 	initSound();
 	initSysTick();
@@ -80,80 +59,79 @@ int main()
 	int start_txt_width = start_txt_len * 7; // characters are 5 pixels + 2 for space
     int start_txt_height = 7;
 
+	int i = 0;
+	int j = 0;
+	int offset = 0;
+	struct vector2d translation = {-SCREEN_WIDTH / 2, -SCREEN_HEIGHT / 2};
+
+	//set up icons used to represent player lives
+	for (i = 0; i < LIVES; i++) {
+			
+		init_player(&lives[i]);
+		lives[i].lives = 1;
+
+		//shrink lives
+		for (j = 0; j < P_VERTS; j++) {
+		
+			divide_vector(&lives[i].obj_vert[j], 2);
+		}
+
+		//convert screen space vector into world space
+		struct vector2d top_left = {20 + offset, 20};
+		add_vector(&top_left, &translation);
+		lives[i].location = top_left;
+		update_player(&lives[i]);
+		offset += 20;
+	}
+
+
 	init_player(&p);
 	// UNUSED YET init_asteroids(asteroids, ASTEROIDS);
 
-	while(1)
+	int quit = 0;
+
+	while(quit == 0)
 	{
-		if (direction > 360) {
-			direction = direction - 360;
-		}
-		if (direction < 0) {
-			direction = direction + 360;
-		}
-		hmoved = vmoved = 0;
-		//hinverted = vinverted = 0;
+		
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
-			direction = direction + 10;
-			hmoved = 1;	
+			rotate_player(&p, 4);
 			playNote(440);
 			
 		}
 		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
 		{			
-			direction = direction - 10;
-			hmoved = 1;	
+			rotate_player(&p, -4);
 		}
-		/*if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
+		if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
 		{
-			
-		}*/
+			quit = 1;
+		}
 		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
 		{			
-			// Convert angle to radians
-			double angleRadians = direction * ((3.142) / 180.0);
+			struct vector2d thrust = get_direction(&p);
+			multiply_vector(&thrust, .06);
+			apply_force(&p.velocity, thrust);
+		}
+		/*
+		if (QUIT BUTTON PRESSED) {
+			quit = 1;
+		}
+		*/
 
-			// Calculate change in x and y using trigonometric functions
-			delta_x = delta_x + (1 * cos(angleRadians));
-			delta_y = delta_y + (1 * sin(angleRadians));
-			
-			vmoved = 1;
-			hmoved = 1;
-		}
-		else {
-			if (delta_x > 0) {
-				delta_x = delta_x - 1;
-			}
-			if (delta_y > 0) {
-				delta_y = delta_y - 1;
-			}
+		// Draws player to screen
+		draw_player(&p);
 
-		}
+		// Draws lives
+		draw_player(&lives[0]);
+		draw_player(&lives[1]);
+		draw_player(&lives[2]);
+		//draw_asteroids(pixels, asteroids, ASTEROIDS);
+		update_player(&p);
+		bounds_player(&p);
+		//bounds_asteroids(asteroids, ASTEROIDS);
 
-		x += delta_x;
-		y += delta_y;
-
-		//drawRectangle((x + delta_x), (y + delta_y), 3, 3, RGBToWord(0xff, 0, 0)); attempt at debug square
-		
-		// Wraps screen
-		if (y < 2)
-		{
-			y = 140;
-		}
-		if (y > 140)
-		{
-			y = 1;
-		}
-		if (x < 2)
-		{
-			x = 120;
-		}
-		if (x > 120)
-		{
-			x = 1;
-		}
-
+		/*
 		if ((vmoved) || (hmoved))
 		{
 			// only redraw if there has been some movement (reduces flicker)
@@ -188,6 +166,8 @@ int main()
 			}
 
 		}
+		*/
+		/*
 		printNumber(x, 10, 10, RGBToWord(0xff, 0xff, 0xff), 0);
 		printNumber(y, 10, 20, RGBToWord(0xff, 0xff, 0xff), 0);
 		printNumber(direction, 10, 30, RGBToWord(0xff, 0xff, 0xff), 0);
@@ -197,7 +177,7 @@ int main()
 		printText("Y POS", 50, 20, RGBToWord(0xff,0xff,0), 0);
 		printText("DIR", 50, 30, RGBToWord(0xff,0xff,0), 0);
 		printText("DELTA X", 50, 40, RGBToWord(0xff,0xff,0), 0);
-		printText("DELTA Y", 50, 50, RGBToWord(0xff,0xff,0), 0);
+		printText("DELTA Y", 50, 50, RGBToWord(0xff,0xff,0), 0);*/
 		delay(50);
 	}
 	return 0;
