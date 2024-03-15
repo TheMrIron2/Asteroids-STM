@@ -2,7 +2,7 @@
 //player.c
 
 #include <stdio.h>
-#include "renderer.h"
+#include "display.h"
 #include "player.h"
 
 void init_player(struct player* p) {
@@ -74,18 +74,9 @@ void draw_player(uint32_t* pixel_buffer, struct player* p) {
 	
 	if (p->lives > 0) {
 		
-		draw_line(pixel_buffer, p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, 0xffffffff);
-		draw_line(pixel_buffer, p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, 0xffffffff);
-		draw_line(pixel_buffer, p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, 0xffffffff);
-	}
+		//!TODO: DRAW PLAYER HERE
 
-	/*
-	//draw vers representing the player
-	for (i = 0; i < P_VERTS; i++) {
-	
-		draw_pixel(pixel_buffer, p->world_vert[i].x, p->world_vert[i].y, 0xff00ffff);	
 	}
-	*/
 
 	//draw verts representing the bullets
 	for (i = 0; i < BULLETS; i++) {
@@ -96,14 +87,6 @@ void draw_player(uint32_t* pixel_buffer, struct player* p) {
 		}
 	}
 
-	/*
-	//draw vert representing ships location
-	struct vector2d cpy = {p->location.x, p->location.y};
-	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-	add_vector(&cpy, &translation);
-
-	draw_pixel(pixel_buffer, cpy.x, cpy.y, 0x00ff00ff);	
-	*/
 }
 
 void update_player(struct player* p) {
