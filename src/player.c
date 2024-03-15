@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "display.h"
 #include "player.h"
+//#include "../assets/assets.h"
 
 void init_player(struct player* p) {
 	
@@ -68,13 +69,19 @@ void shoot_bullet(struct player* p) {
 	}
 }
 
-void draw_player(uint32_t* pixel_buffer, struct player* p) {
+void draw_player(struct player* p) {
+
+	drawLine(p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, 0xff);
+	drawLine(p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, 0xff);
+	drawLine(p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, 0xff);
 	
 	int i = 0;
 	
 	if (p->lives > 0) {
-		
-		//!TODO: DRAW PLAYER HERE
+
+		drawLine(p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, 0xff);
+		drawLine(p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, 0xff);
+		drawLine(p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, 0xff);
 
 	}
 
@@ -82,8 +89,9 @@ void draw_player(uint32_t* pixel_buffer, struct player* p) {
 	for (i = 0; i < BULLETS; i++) {
 
 		if (p->bullets[i].alive == TRUE) {
-			
-			draw_pixel(pixel_buffer, p->bullets[i].location.x, p->bullets[i].location.y, 0xffffffff);	
+
+			//!TODO: DRAW BULLETS
+
 		}
 	}
 

@@ -20,6 +20,13 @@ void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
 volatile uint32_t milliseconds;
 
+#define ASTEROIDS 27
+#define LIVES 3
+
+// UNUSED YET - struct asteroid asteroids[ASTEROIDS];		//The asteroids
+struct player p;				//The player
+struct player lives[LIVES];			//Player lives left
+
 int main()
 {
 	int hinverted = 0;
@@ -52,6 +59,8 @@ int main()
 	bool menu = 1;
 
 	printText("Press right", 10, 100, RGBToWord(0xff,0xff,0), 0);
+	init_player(&p);
+	draw_player(&p);
 
 	while(menu == 1)
 	{
@@ -71,7 +80,9 @@ int main()
 	int start_txt_width = start_txt_len * 7; // characters are 5 pixels + 2 for space
     int start_txt_height = 7;
 
-	putImage(x,y,16,16,player_90,0,0);
+	init_player(&p);
+	// UNUSED YET init_asteroids(asteroids, ASTEROIDS);
+
 	while(1)
 	{
 		if (direction > 360) {
@@ -155,7 +166,7 @@ int main()
 			}
 			else
 			{
-				putImage(x,y,16,16,player,0,vinverted);
+				putImage(x,y,16,16,player_0,0,vinverted);
 			}
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
 			if (game_started)
