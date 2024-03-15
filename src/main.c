@@ -25,7 +25,7 @@ int main()
 	// Degree of rotation, from 0 -> 360
 	float direction = 0;
 
-	int toggle = 0; // unused
+	//int toggle = 0; // unused
 	int hmoved = 0;
 	int vmoved = 0;
 
@@ -83,7 +83,7 @@ int main()
 		{					
 			direction = direction + 10;
 			hmoved = 1;	
-						playNote(440);
+			playNote(440);
 			
 		}
 		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
