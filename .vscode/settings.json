@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.html": "html",
+        "stm32f031x6.h": "c"
+    }
+}
