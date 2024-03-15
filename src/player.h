@@ -11,6 +11,7 @@ enum boolean {TRUE, FALSE};
 struct bullet {
 	
 	struct vector2d location;
+	struct vector2d old_location;
 	struct vector2d velocity;
 	enum boolean alive;
 };

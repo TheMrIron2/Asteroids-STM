@@ -8,12 +8,12 @@
 void init_player(struct player* p) {
 	
 	int i = 0;
-	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+	struct vector2d translation = {SCREEN_WIDTH, SCREEN_HEIGHT};
 	
 	p->hit_radius = 15;
 	p->lives = 3;
-	p->location.x = 0;
-	p->location.y = 0;
+	p->location.x = 50;
+	p->location.y = 50;
 	p->velocity.x = 0;
 	p->velocity.y = 0;
 	p->obj_vert[0].x = 0;
@@ -27,7 +27,7 @@ void init_player(struct player* p) {
 	for(i = 0; i < P_VERTS; i++) {
 
 		multiply_vector(&p->obj_vert[i], -1);
-		multiply_vector(&p->obj_vert[i], 12);
+		multiply_vector(&p->obj_vert[i], 6);
 		add_vector(&p->world_vert[i], &p->obj_vert[i]);
 		add_vector(&p->world_vert[i], &translation);
 	}
@@ -84,12 +84,16 @@ void draw_player(struct player* p) {
 
 	}
 
-	//draw verts representing the bullets
+	// Draws the bullets
 	for (i = 0; i < BULLETS; i++) {
 
 		if (p->bullets[i].alive == TRUE) {
 
-			//!TODO: DRAW BULLETS
+			// Redraws previous position as background colour
+			drawRectangle(p->bullets[i].old_location.x, p->bullets[i].old_location.y, 1, 1, 0);
+
+			// Draws new bullet position
+			drawRectangle(p->bullets[i].location.x, p->bullets[i].location.y, 1, 1, 0xfff);
 
 		}
 	}
@@ -114,10 +118,16 @@ void update_player(struct player* p) {
 	
 	for (i = 0; i < BULLETS; i++) {
 		
+		// Saves old location
+		p->bullets[i].old_location = p->bullets[i].location;
+
+		// Moves bullets
 		add_vector(&p->bullets[i].location, &p->bullets[i].velocity);
+
 	}
 }
 
+// Rotates player
 void rotate_player(struct player* p, float degrees) {
 	
 	int i = 0;
@@ -132,36 +142,37 @@ void bounds_player(struct player* p) {
 	
 	int i = 0;
 	
-	if (p->location.x < -SCREEN_WIDTH / 2) {
+	// Code for player looping around the screen
+	if (p->location.x > SCREEN_WIDTH) {
 		
-		p->location.x = SCREEN_WIDTH / 2;
+		p->location.x = 1;
 	}
 	
-	if (p->location.x > SCREEN_WIDTH / 2) {
+	if (p->location.x < 1) {
 		
-		p->location.x = -SCREEN_WIDTH / 2;
+		p->location.x = SCREEN_WIDTH;
 	}
 
-	if (p->location.y < -SCREEN_HEIGHT / 2) {
+	if (p->location.y < 1) {
 		
-		p->location.y = SCREEN_HEIGHT / 2;
+		p->location.y = SCREEN_HEIGHT;
 	}
 	
-	if (p->location.y > SCREEN_HEIGHT / 2) {
+	if (p->location.y > SCREEN_HEIGHT) {
 		
-		p->location.y = -SCREEN_HEIGHT / 2;
+		p->location.y = 1;
 	}
 
 	//bullet is out of bounds, reset bullet to be shot again
 	//bullets are in world space
 	for (i = 0; i < BULLETS; i++) {
 		
-		if (p->bullets[i].location.x < 0 || p->bullets[i].location.x >= SCREEN_WIDTH) {
+		if (p->bullets[i].location.x < 0 || p->bullets[i].location.x > SCREEN_WIDTH) {
 			
 			p->bullets[i].alive = FALSE;
 		}
 		
-		if (p->bullets[i].location.y < 0 || p->bullets[i].location.y >= SCREEN_HEIGHT) {
+		if (p->bullets[i].location.y < 0 || p->bullets[i].location.y > SCREEN_HEIGHT) {
 			
 			p->bullets[i].alive = FALSE;
 		}
