@@ -74,7 +74,7 @@ int main()
 	int i = 0;
 	int j = 0;
 	int offset = 0;
-	struct vector2d translation = {-SCREEN_WIDTH / 2, -SCREEN_HEIGHT / 2};
+	struct vector2d translation = {-SCREEN_WIDTH, -SCREEN_HEIGHT};
 
 	// Set up icons used to represent player lives, they're mini players
 	for (i = 0; i < LIVES; i++) {
@@ -140,20 +140,14 @@ int main()
 		//draw_asteroids(pixels, asteroids, ASTEROIDS);
 		update_player(&p);
 		bounds_player(&p);
-		//bounds_asteroids(asteroids, ASTEROIDS);
-
-		printNumber(p.location.x, 10, 10, RGBToWord(0xff, 0xff, 0xff), 0);
-		printNumber(p.location.y, 10, 20, RGBToWord(0xff, 0xff, 0xff), 0);
-		printNumber(p.world_vert[0].x, 10, 30, RGBToWord(0xff, 0xff, 0xff), 0);
-		printNumber(p.world_vert[0].y, 10, 40, RGBToWord(0xff, 0xff, 0xff), 0);
-		printText("X POS", 50, 10, RGBToWord(0xff,0xff,0), 0);
-		printText("Y POS", 50, 20, RGBToWord(0xff,0xff,0), 0);
+		//bounds_asteroids(asteroids, ASTEROIDS);		
 		
-		
-		delay(50);
+		// Adds slight delay so that the game doesnt run like its on steroids
+		delay(30);
 	}
 	return 0;
 }
+
 void initSysTick(void)
 {
 	SysTick->LOAD = 48000;
@@ -161,10 +155,12 @@ void initSysTick(void)
 	SysTick->VAL = 10;
 	__asm(" cpsie i "); // enable interrupts
 }
+
 void SysTick_Handler(void)
 {
 	milliseconds++;
 }
+
 void initClock(void)
 {
 // This is potentially a dangerous function as it could
@@ -193,6 +189,7 @@ void initClock(void)
         // set PLL as system clock source 
         RCC->CFGR |= (1<<1);
 }
+
 void delay(volatile uint32_t dly)
 {
 	uint32_t end_time = dly + milliseconds;
@@ -205,6 +202,7 @@ void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber)
 	Port->PUPDR = Port->PUPDR &~(3u << BitNumber*2); // clear pull-up resistor bits
 	Port->PUPDR = Port->PUPDR | (1u << BitNumber*2); // set pull-up bit
 }
+
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode)
 {
 	/*
@@ -215,6 +213,7 @@ void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode)
 	mode_value = mode_value | Mode;
 	Port->MODER = mode_value;
 }
+
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py)
 {
 	// checks to see if point px,py is within the rectange defined by x,y,w,h

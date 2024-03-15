@@ -8,7 +8,7 @@
 void init_player(struct player* p) {
 	
 	int i = 0;
-	struct vector2d translation = {SCREEN_WIDTH, SCREEN_HEIGHT};
+	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 	
 	p->hit_radius = 15;
 	p->lives = 3;
@@ -26,6 +26,7 @@ void init_player(struct player* p) {
 	//convert player verts from object space to world space
 	for(i = 0; i < P_VERTS; i++) {
 
+		// Points the player up
 		multiply_vector(&p->obj_vert[i], -1);
 		multiply_vector(&p->obj_vert[i], 6);
 		add_vector(&p->world_vert[i], &p->obj_vert[i]);
@@ -87,10 +88,10 @@ void draw_player(struct player* p) {
 	// Draws the bullets
 	for (i = 0; i < BULLETS; i++) {
 
-		if (p->bullets[i].alive == TRUE) {
+		// Redraws previous position as background colour
+		drawRectangle(p->bullets[i].old_location.x, p->bullets[i].old_location.y, 1, 1, 0);
 
-			// Redraws previous position as background colour
-			drawRectangle(p->bullets[i].old_location.x, p->bullets[i].old_location.y, 1, 1, 0);
+		if (p->bullets[i].alive == TRUE) {
 
 			// Draws new bullet position
 			drawRectangle(p->bullets[i].location.x, p->bullets[i].location.y, 1, 1, 0xfff);
@@ -105,15 +106,30 @@ void update_player(struct player* p) {
 	limit_vector(&p->velocity, 2);
 	add_vector(&p->location, &p->velocity);
 	
-	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-
 	int i = 0; 
 
 	for (i =0; i < P_VERTS; i++) {
 
-		p->old_world_vert[i] = p->world_vert[i];		
-		p->world_vert[i] = add_vector_new(&p->obj_vert[i], &p->location);	
-		add_vector(&p->world_vert[i], &translation);
+		// Saves old position of vertices
+		p->old_world_vert[i] = p->world_vert[i];
+
+		// Moves vertices to new position	
+		p->world_vert[i] = add_vector_new(&p->obj_vert[i], &p->location);
+
+		// Checks if any vertices are offscreen and moves them back onscreen
+		if (p->world_vert[i].y > SCREEN_HEIGHT) {
+			p->world_vert[i].y -= SCREEN_HEIGHT;
+		}
+		if (p->world_vert[i].y < 0) {
+			p->world_vert[i].y += SCREEN_HEIGHT;
+		}
+		if (p->world_vert[i].x > SCREEN_WIDTH) {
+			p->world_vert[i].x -= SCREEN_WIDTH;
+		}
+		if (p->world_vert[i].x < 0) {
+			p->world_vert[i].x += SCREEN_WIDTH;
+		}
+		
 	}
 	
 	for (i = 0; i < BULLETS; i++) {
