@@ -37,10 +37,28 @@ int main()
 
 	bool menu = 1;
 
-	printText("Press right", 10, 100, RGBToWord(0xff,0xff,0), 0);
+	// X position of the asteroid
+	uint16_t asteroid_x = 2;
+	// Y position of the asteroid
+	uint16_t asteroid_y = 120; 
+
+	printTextX2("Definitly", 10, 10, RGBToWord(0xff,0xff,0), 0);
+	printTextX2("Not", 10, 30, RGBToWord(0xff,0xff,0), 0);
+	printTextX2("Asteroids", 10, 50, RGBToWord(0xff,0xff,0), 0);
+	printText("Press right", 30, 100, RGBToWord(0xff,0xff,0), 0);
 	init_player(&p);
 	draw_player(&p);
 
+	while(menu == 1)
+	{
+		putImage(asteroid_x,asteroid_y,16,16,asteroid,0,0);
+		asteroid_x = asteroid_x + 1;
+		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
+		{					
+			menu = 0;
+			fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0x0);
+		}
+	}
 	while(menu == 1)
 	{
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
