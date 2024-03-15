@@ -74,6 +74,10 @@ void draw_player(struct player* p) {
 	
 	if (p->lives > 0) {
 
+		drawLine(p->old_world_vert[0].x, p->old_world_vert[0].y, p->old_world_vert[1].x, p->old_world_vert[1].y, 0);
+		drawLine(p->old_world_vert[1].x, p->old_world_vert[1].y, p->old_world_vert[2].x, p->old_world_vert[2].y, 0);
+		drawLine(p->old_world_vert[2].x, p->old_world_vert[2].y, p->old_world_vert[0].x, p->old_world_vert[0].y, 0);
+
 		drawLine(p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, 0xff);
 		drawLine(p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, 0xff);
 		drawLine(p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, 0xff);
@@ -102,7 +106,8 @@ void update_player(struct player* p) {
 	int i = 0; 
 
 	for (i =0; i < P_VERTS; i++) {
-		
+
+		p->old_world_vert[i] = p->world_vert[i];		
 		p->world_vert[i] = add_vector_new(&p->obj_vert[i], &p->location);	
 		add_vector(&p->world_vert[i], &translation);
 	}

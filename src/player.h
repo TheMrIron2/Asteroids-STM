@@ -23,6 +23,7 @@ struct player {
 	struct vector2d velocity;
 	struct vector2d obj_vert[P_VERTS];
 	struct vector2d world_vert[P_VERTS];
+	struct vector2d old_world_vert[P_VERTS];
 	struct bullet bullets[BULLETS];
 };
 
