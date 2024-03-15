@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "../assets/assets.h"
+#include "musical_notes.h"
+#include "sound.h"
 #include "display.h"
 #include <stdbool.h>
 void initClock(void);
@@ -20,10 +22,10 @@ int main()
 	int hinverted = 0;
 	int vinverted = 0;
 	
-	// Degree of rotation, from -1 -> 1
+	// Degree of rotation, from 0 -> 360
 	float direction = 0;
 
-	int toggle = 0;
+	int toggle = 0; // unused
 	int hmoved = 0;
 	int vmoved = 0;
 
@@ -40,12 +42,13 @@ int main()
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	initClock();
+	initSound();
 	initSysTick();
 	setupIO();
 
 	bool menu = 1;
 
-	printText("Prss right", 10, 100, RGBToWord(0xff,0xff,0), 0);
+	printText("Press right", 10, 100, RGBToWord(0xff,0xff,0), 0);
 
 	while(menu == 1)
 	{
@@ -79,7 +82,9 @@ int main()
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
 			direction = direction + 10;
-			hmoved = 1;				
+			hmoved = 1;	
+						playNote(440);
+			
 		}
 		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
 		{			
@@ -152,7 +157,7 @@ int main()
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
 			if (game_started)
 			{
-				// Draw astroids
+			// Draw asteroids
 			}
 			else
 			{
