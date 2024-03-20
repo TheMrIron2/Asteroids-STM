@@ -5,13 +5,13 @@
 #include "display.h"
 #include "player.h"
 
+#define player_hitbox 10
+
 void init_player(struct player* p) {
 	
 	int i = 0;
 	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-	
-	p->hit_radius = 15;
-	p->lives = 3;
+
 	p->location.x = 50;
 	p->location.y = 50;
 	p->velocity.x = 0;
@@ -32,11 +32,7 @@ void init_player(struct player* p) {
 		add_vector(&p->world_vert[i], &p->obj_vert[i]);
 		add_vector(&p->world_vert[i], &translation);
 	}
-	
-	for(i = 0; i < BULLETS; i++) {
-		
-		p->bullets[i].alive = FALSE;
-	}
+
 }
 
 void apply_force(struct vector2d* velocity, struct vector2d v) {
@@ -52,52 +48,17 @@ struct vector2d get_direction(struct player* p) {
 	return direction;
 }
 
-void shoot_bullet(struct player* p) {
-	
-	int i = 0;
-
-	for (i = 0; i < BULLETS; i++) {
-		
-		if (p->bullets[i].alive == FALSE) {
-			
-			p->bullets[i].alive = TRUE;
-			p->bullets[i].location = p->world_vert[0];
-			p->bullets[i].velocity = get_direction(p);
-			multiply_vector(&p->bullets[i].velocity, 4.1);
-			break;
-		}
-	}
-}
-
 void draw_player(struct player* p) {
 	
-	int i = 0;
-	
-	if (p->lives > 0) {
+	// Draws over old position with black
+	drawLine(p->old_world_vert[0].x, p->old_world_vert[0].y, p->old_world_vert[1].x, p->old_world_vert[1].y, 0);
+	drawLine(p->old_world_vert[1].x, p->old_world_vert[1].y, p->old_world_vert[2].x, p->old_world_vert[2].y, 0);
+	drawLine(p->old_world_vert[2].x, p->old_world_vert[2].y, p->old_world_vert[0].x, p->old_world_vert[0].y, 0);
 
-		drawLine(p->old_world_vert[0].x, p->old_world_vert[0].y, p->old_world_vert[1].x, p->old_world_vert[1].y, 0);
-		drawLine(p->old_world_vert[1].x, p->old_world_vert[1].y, p->old_world_vert[2].x, p->old_world_vert[2].y, 0);
-		drawLine(p->old_world_vert[2].x, p->old_world_vert[2].y, p->old_world_vert[0].x, p->old_world_vert[0].y, 0);
-
-		drawLine(p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, 0xff);
-		drawLine(p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, 0xff);
-		drawLine(p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, 0xff);
-
-	}
-
-	// Draws the bullets
-	for (i = 0; i < BULLETS; i++) {
-
-		// Redraws previous position as background colour
-		drawRectangle(p->bullets[i].old_location.x, p->bullets[i].old_location.y, 1, 1, 0);
-
-		if (p->bullets[i].alive == TRUE) {
-
-			// Draws new bullet position
-			drawRectangle(p->bullets[i].location.x, p->bullets[i].location.y, 1, 1, 0xfff);
-
-		}
-	}
+	// Draws new position
+	drawLine(p->world_vert[0].x, p->world_vert[0].y, p->world_vert[1].x, p->world_vert[1].y, 0xff);
+	drawLine(p->world_vert[1].x, p->world_vert[1].y, p->world_vert[2].x, p->world_vert[2].y, 0xff);
+	drawLine(p->world_vert[2].x, p->world_vert[2].y, p->world_vert[0].x, p->world_vert[0].y, 0xff);
 
 }
 
@@ -131,16 +92,6 @@ void update_player(struct player* p) {
 		}
 		
 	}
-	
-	for (i = 0; i < BULLETS; i++) {
-		
-		// Saves old location
-		p->bullets[i].old_location = p->bullets[i].location;
-
-		// Moves bullets
-		add_vector(&p->bullets[i].location, &p->bullets[i].velocity);
-
-	}
 }
 
 // Rotates player
@@ -148,50 +99,35 @@ void rotate_player(struct player* p, float degrees) {
 	
 	int i = 0;
 
-	for (i =0; i < P_VERTS; i++) {
+	for (i = 0; i < P_VERTS; i++) {
 	
 		rotate_vector(&p->obj_vert[i], degrees);
 	}
 }
 
 void bounds_player(struct player* p) {
-	
-	int i = 0;
-	
+
 	// Code for player looping around the screen
-	if (p->location.x > SCREEN_WIDTH) {
+	if ((p->location.x + player_hitbox) > SCREEN_WIDTH) {
 		
-		p->location.x = 1;
+		// Instead of setting the location with player_hitbox, I need to hardcode it
+		// I have no idea why. I want to scream.
+		p->location.x = 15;
 	}
 	
-	if (p->location.x < 1) {
+	if ((p->location.x - player_hitbox) < 1) {
 		
-		p->location.x = SCREEN_WIDTH;
+		p->location.x = SCREEN_WIDTH - player_hitbox;
 	}
 
-	if (p->location.y < 1) {
+	if ((p->location.y - player_hitbox) < 1) {
 		
-		p->location.y = SCREEN_HEIGHT;
+		p->location.y = SCREEN_HEIGHT - player_hitbox;
 	}
 	
-	if (p->location.y > SCREEN_HEIGHT) {
+	if ((p->location.y + player_hitbox) > SCREEN_HEIGHT) {
 		
-		p->location.y = 1;
-	}
-
-	//bullet is out of bounds, reset bullet to be shot again
-	//bullets are in world space
-	for (i = 0; i < BULLETS; i++) {
-		
-		if (p->bullets[i].location.x < 0 || p->bullets[i].location.x > SCREEN_WIDTH) {
-			
-			p->bullets[i].alive = FALSE;
-		}
-		
-		if (p->bullets[i].location.y < 0 || p->bullets[i].location.y > SCREEN_HEIGHT) {
-			
-			p->bullets[i].alive = FALSE;
-		}
+		p->location.y = 15;
 	}
 }
 

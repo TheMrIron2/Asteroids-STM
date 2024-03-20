@@ -8,6 +8,7 @@
 #include "sound.h"
 #include "display.h"
 #include "player.h"
+#include "board.h"
 
 void initClock(void);
 void initSysTick(void);
@@ -20,16 +21,8 @@ void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
 volatile uint32_t milliseconds;
 
-#define ASTEROIDS 27
-#define LIVES 3
-
-// UNUSED YET - struct asteroid asteroids[ASTEROIDS];
-
 // The player
 struct player p;
-
-// Player lives
-struct player lives[LIVES];
 
 int main()
 {
@@ -38,6 +31,7 @@ int main()
 	initSound();
 	initSysTick();
 	setupIO();
+	init_player(&p);
 
 	bool menu = 1;
 
@@ -46,11 +40,11 @@ int main()
 	// Y position of the asteroid
 	uint16_t asteroid_y = 120; 
 
-	printTextX2("Definitely", 10, 10, RGBToWord(0xff,0xff,0), 0);
-	printTextX2("Not", 10, 30, RGBToWord(0xff,0xff,0), 0);
-	printTextX2("Asteroids", 10, 50, RGBToWord(0xff,0xff,0), 0);
+	// Title text
+	printTextX2("Tic-Tac-Toe", 10, 10, RGBToWord(0xff,0xff,0), 0);
+	printTextX2("But", 10, 30, RGBToWord(0xff,0xff,0), 0);
+	printTextX2("Worse", 10, 50, RGBToWord(0xff,0xff,0), 0);
 	printText("Press right", 30, 100, RGBToWord(0xff,0xff,0), 0);
-	init_player(&p);
 	draw_player(&p);
 
 	while(menu == 1)
@@ -61,44 +55,14 @@ int main()
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
 			menu = 0;
-			fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0x0);
+			fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 		}
 		delay(50);
 	}
 
-	const char *startText="Start Game";
 	int start_txt_x = 30;
 	int start_txt_y = 100;
-	printText(startText, start_txt_x, start_txt_y, RGBToWord(0xff,0xff,0), 0);
-
-	int i = 0;
-	int j = 0;
-	int offset = 0;
-	struct vector2d translation = {-SCREEN_WIDTH, -SCREEN_HEIGHT};
-
-	// Set up icons used to represent player lives, they're mini players
-	for (i = 0; i < LIVES; i++) {
-			
-		init_player(&lives[i]);
-		lives[i].lives = 1;
-
-		// Shrink the size of lives icons
-		for (j = 0; j < P_VERTS; j++) {
-		
-			divide_vector(&lives[i].obj_vert[j], 2);
-		}
-
-		// Convert screen space vector into world space
-		struct vector2d top_left = {20 + offset, 20};
-		add_vector(&top_left, &translation);
-		lives[i].location = top_left;
-		update_player(&lives[i]);
-		offset += 10;
-	}
-
-
-	init_player(&p);
-	// UNUSED YET init_asteroids(asteroids, ASTEROIDS);
+	printText("Start Game", start_txt_x, start_txt_y, RGBToWord(0xff,0xff,0), 0);
 
 	int quit = 0;
 
@@ -107,21 +71,17 @@ int main()
 		
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
-			rotate_player(&p, 4);
+			rotate_player(&p, 6);
 			playNote(440);
 			
 		}
 		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
 		{			
-			rotate_player(&p, -4);
+			rotate_player(&p, -6);
 		}
 		if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
 		{
-			if (p.lives > 0) {
-								
-				shoot_bullet(&p);
-
-			}
+			// Check box with current letter
 		}
 		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
 		{			
@@ -132,15 +92,10 @@ int main()
 
 		// Draws player to screen
 		draw_player(&p);
+		draw_board();
 
-		// Draws lives
-		draw_player(&lives[0]);
-		draw_player(&lives[1]);
-		draw_player(&lives[2]);
-		//draw_asteroids(pixels, asteroids, ASTEROIDS);
 		update_player(&p);
 		bounds_player(&p);
-		//bounds_asteroids(asteroids, ASTEROIDS);		
 		
 		// Adds slight delay so that the game doesnt run like its on steroids
 		delay(30);

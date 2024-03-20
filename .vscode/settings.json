@@ -4,5 +4,6 @@
         "stm32f031x6.h": "c",
         "assets.h": "c",
         "sound.h": "c"
-    }
+    },
+    "cmake.sourceDirectory": "D:/Microprocessors Project/.pio/libdeps/nucleo_f031k6/Unity"
 }
