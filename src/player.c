@@ -12,6 +12,7 @@ void init_player(struct player* p) {
 	int i = 0;
 	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 
+	p->symbol = 'X';
 	p->location.x = 50;
 	p->location.y = 50;
 	p->velocity.x = 0;
@@ -92,6 +93,13 @@ void update_player(struct player* p) {
 		}
 		
 	}
+
+	if (p->symbol == 'X') {
+		p->symbol = 'O';
+	}
+	else {
+		p->symbol = 'X';
+	}
 }
 
 // Rotates player
@@ -130,4 +138,3 @@ void bounds_player(struct player* p) {
 		p->location.y = 15;
 	}
 }
-

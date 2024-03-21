@@ -15,3 +15,5 @@ uint16_t RGBToWord(uint16_t R, uint16_t G, uint16_t B);
 uint32_t mystrlen(const char *s);
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 160
+#define SCREEN_CENTRE_X (SCREEN_WIDTH / 2)
+#define SCREEN_CENTRE_Y (SCREEN_HEIGHT / 2)

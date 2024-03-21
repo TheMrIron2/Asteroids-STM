@@ -24,6 +24,12 @@ volatile uint32_t milliseconds;
 // The player
 struct player p;
 
+// Current cell number 1 -> 9, 0 if not in a cell
+int current_cell = 0;
+
+// The cells
+struct cell c1, c2, c3, c4, c5, c6, c7, c8, c9;
+
 int main()
 {
 	// Starts clocks and system processes
@@ -35,13 +41,72 @@ int main()
 
 	bool menu = 1;
 
-	// X position of the asteroid
-	uint16_t asteroid_x = 2;
-	// Y position of the asteroid
-	uint16_t asteroid_y = 120; 
+	// Populates cells with information, yes I know it's a nightmare yes I hate myself.
+	c1.centre = (struct position){(SCREEN_CENTRE_X - CELL_SIZE), (SCREEN_CENTRE_Y - CELL_SIZE)};
+	c1.top_left = (struct position){(c1.centre.x - (CELL_SIZE / 2)), (c1.centre.y - (CELL_SIZE / 2))};
+	c1.top_right = (struct position){(c1.centre.x + (CELL_SIZE / 2)), (c1.centre.y - (CELL_SIZE / 2))};
+	c1.bottom_left = (struct position){(c1.centre.x - (CELL_SIZE / 2)), (c1.centre.y + (CELL_SIZE / 2))};
+	c1.bottom_right = (struct position){(c1.centre.x + (CELL_SIZE / 2)), (c1.centre.y + (CELL_SIZE / 2))};
+	c1.symbol = ' ';
+
+	c2.centre = (struct position){SCREEN_CENTRE_X, (SCREEN_CENTRE_Y - CELL_SIZE)};
+	c2.top_left = (struct position){(c2.centre.x - (CELL_SIZE / 2)), (c2.centre.y - (CELL_SIZE / 2))};
+	c2.top_right = (struct position){(c2.centre.x + (CELL_SIZE / 2)), (c2.centre.y - (CELL_SIZE / 2))};
+	c2.bottom_left = (struct position){(c2.centre.x - (CELL_SIZE / 2)), (c2.centre.y + (CELL_SIZE / 2))};
+	c2.bottom_right = (struct position){(c2.centre.x + (CELL_SIZE / 2)), (c2.centre.y + (CELL_SIZE / 2))};
+	c2.symbol = ' ';
+
+	c3.centre = (struct position){(SCREEN_CENTRE_X + CELL_SIZE), (SCREEN_CENTRE_Y - CELL_SIZE)};
+	c3.top_left = (struct position){(c3.centre.x - (CELL_SIZE / 2)), (c3.centre.y - (CELL_SIZE / 2))};
+	c3.top_right = (struct position){(c3.centre.x + (CELL_SIZE / 2)), (c3.centre.y - (CELL_SIZE / 2))};
+	c3.bottom_left = (struct position){(c3.centre.x - (CELL_SIZE / 2)), (c3.centre.y + (CELL_SIZE / 2))};
+	c3.bottom_right = (struct position){(c3.centre.x + (CELL_SIZE / 2)), (c3.centre.y + (CELL_SIZE / 2))};
+	c3.symbol = ' ';
+
+	c4.centre = (struct position){(SCREEN_CENTRE_X - CELL_SIZE), SCREEN_CENTRE_Y};
+	c4.top_left = (struct position){(c4.centre.x - (CELL_SIZE / 2)), (c4.centre.y - (CELL_SIZE / 2))};
+	c4.top_right = (struct position){(c4.centre.x + (CELL_SIZE / 2)), (c4.centre.y - (CELL_SIZE / 2))};
+	c4.bottom_left = (struct position){(c4.centre.x - (CELL_SIZE / 2)), (c4.centre.y + (CELL_SIZE / 2))};
+	c4.bottom_right = (struct position){(c4.centre.x + (CELL_SIZE / 2)), (c4.centre.y + (CELL_SIZE / 2))};
+	c4.symbol = ' ';
+
+	c5.centre = (struct position){SCREEN_CENTRE_X, SCREEN_CENTRE_Y};
+	c5.top_left = (struct position){(c5.centre.x - (CELL_SIZE / 2)), (c5.centre.y - (CELL_SIZE / 2))};
+	c5.top_right = (struct position){(c5.centre.x + (CELL_SIZE / 2)), (c5.centre.y - (CELL_SIZE / 2))};
+	c5.bottom_left = (struct position){(c5.centre.x - (CELL_SIZE / 2)), (c5.centre.y + (CELL_SIZE / 2))};
+	c5.bottom_right = (struct position){(c5.centre.x + (CELL_SIZE / 2)), (c5.centre.y + (CELL_SIZE / 2))};
+	c5.symbol = ' ';
+
+	c6.centre = (struct position){(SCREEN_CENTRE_X + CELL_SIZE), SCREEN_CENTRE_Y};
+	c6.top_left = (struct position){(c6.centre.x - (CELL_SIZE / 2)), (c6.centre.y - (CELL_SIZE / 2))};
+	c6.top_right = (struct position){(c6.centre.x + (CELL_SIZE / 2)), (c6.centre.y - (CELL_SIZE / 2))};
+	c6.bottom_left = (struct position){(c6.centre.x - (CELL_SIZE / 2)), (c6.centre.y + (CELL_SIZE / 2))};
+	c6.bottom_right = (struct position){(c6.centre.x + (CELL_SIZE / 2)), (c6.centre.y + (CELL_SIZE / 2))};
+	c6.symbol = ' ';
+
+	c7.centre = (struct position){(SCREEN_CENTRE_X - CELL_SIZE), (SCREEN_CENTRE_Y + CELL_SIZE)};
+	c7.top_left = (struct position){(c7.centre.x - (CELL_SIZE / 2)), (c7.centre.y - (CELL_SIZE / 2))};
+	c7.top_right = (struct position){(c7.centre.x + (CELL_SIZE / 2)), (c7.centre.y - (CELL_SIZE / 2))};
+	c7.bottom_left = (struct position){(c7.centre.x - (CELL_SIZE / 2)), (c7.centre.y + (CELL_SIZE / 2))};
+	c7.bottom_right = (struct position){(c7.centre.x + (CELL_SIZE / 2)), (c7.centre.y + (CELL_SIZE / 2))};
+	c7.symbol = ' ';
+
+	c8.centre = (struct position){SCREEN_CENTRE_X, (SCREEN_CENTRE_Y + CELL_SIZE)};
+	c8.top_left = (struct position){(c8.centre.x - (CELL_SIZE / 2)), (c8.centre.y - (CELL_SIZE / 2))};
+	c8.top_right = (struct position){(c8.centre.x + (CELL_SIZE / 2)), (c8.centre.y - (CELL_SIZE / 2))};
+	c8.bottom_left = (struct position){(c8.centre.x - (CELL_SIZE / 2)), (c8.centre.y + (CELL_SIZE / 2))};
+	c8.bottom_right = (struct position){(c8.centre.x + (CELL_SIZE / 2)), (c8.centre.y + (CELL_SIZE / 2))};
+	c8.symbol = ' ';
+
+	c9.centre = (struct position){(SCREEN_CENTRE_X + CELL_SIZE), (SCREEN_CENTRE_Y + CELL_SIZE)};
+	c9.top_left = (struct position){(c9.centre.x - (CELL_SIZE / 2)), (c9.centre.y - (CELL_SIZE / 2))};
+	c9.top_right = (struct position){(c9.centre.x + (CELL_SIZE / 2)), (c9.centre.y - (CELL_SIZE / 2))};
+	c9.bottom_left = (struct position){(c9.centre.x - (CELL_SIZE / 2)), (c9.centre.y + (CELL_SIZE / 2))};
+	c9.bottom_right = (struct position){(c9.centre.x + (CELL_SIZE / 2)), (c9.centre.y + (CELL_SIZE / 2))};
+	c9.symbol = ' ';
 
 	// Title text
-	printTextX2("Tic-Tac-Toe", 10, 10, RGBToWord(0xff,0xff,0), 0);
+	printTextX2("X's + O's", 10, 10, RGBToWord(0xff,0xff,0), 0);
 	printTextX2("But", 10, 30, RGBToWord(0xff,0xff,0), 0);
 	printTextX2("Worse", 10, 50, RGBToWord(0xff,0xff,0), 0);
 	printText("Press right", 30, 100, RGBToWord(0xff,0xff,0), 0);
@@ -49,8 +114,6 @@ int main()
 
 	while(menu == 1)
 	{
-		putImage(asteroid_x,asteroid_y,16,16,asteroid,0,0);
-		asteroid_x = asteroid_x + 1;
 
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
@@ -60,14 +123,12 @@ int main()
 		delay(50);
 	}
 
-	int start_txt_x = 30;
-	int start_txt_y = 100;
-	printText("Start Game", start_txt_x, start_txt_y, RGBToWord(0xff,0xff,0), 0);
-
 	int quit = 0;
 
 	while(quit == 0)
 	{
+
+		current_cell = check_current_cell();
 		
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
@@ -81,7 +142,36 @@ int main()
 		}
 		if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
 		{
-			// Check box with current letter
+			if (current_cell == 0) {
+				// Do nothing
+			}
+			else if (current_cell == 1) {
+				c1.symbol = p.symbol;
+			}
+			else if (current_cell == 2) {
+				c2.symbol = p.symbol;
+			}
+			else if (current_cell == 3) {
+				c3.symbol = p.symbol;
+			}
+			else if (current_cell == 4) {
+				c4.symbol = p.symbol;
+			}
+			else if (current_cell == 5) {
+				c5.symbol = p.symbol;
+			}
+			else if (current_cell == 6) {
+				c6.symbol = p.symbol;
+			}
+			else if (current_cell == 7) {
+				c7.symbol = p.symbol;
+			}
+			else if (current_cell == 8) {
+				c8.symbol = p.symbol;
+			}
+			else if (current_cell == 9) {
+				c9.symbol = p.symbol;
+			}
 		}
 		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
 		{			
@@ -90,12 +180,22 @@ int main()
 			apply_force(&p.velocity, thrust);
 		}
 
+		update_player(&p);
+		bounds_player(&p);
+		current_cell = check_current_cell();
+
 		// Draws player to screen
 		draw_player(&p);
 		draw_board();
-
-		update_player(&p);
-		bounds_player(&p);
+		draw_symbol(&c1);
+		draw_symbol(&c2);
+		draw_symbol(&c3);
+		draw_symbol(&c4);
+		draw_symbol(&c5);
+		draw_symbol(&c6);
+		draw_symbol(&c7);
+		draw_symbol(&c8);
+		draw_symbol(&c9);
 		
 		// Adds slight delay so that the game doesnt run like its on steroids
 		delay(30);
@@ -169,6 +269,7 @@ void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode)
 	Port->MODER = mode_value;
 }
 
+// Returns 1 if inside, else 0
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py)
 {
 	// checks to see if point px,py is within the rectange defined by x,y,w,h
@@ -197,4 +298,80 @@ void setupIO()
 	enablePullUp(GPIOB,5);
 	enablePullUp(GPIOA,11);
 	enablePullUp(GPIOA,8);
+}
+
+// Function returns 0 if not in a cell, 1 -> 9 being cell numbers (3 top right, 7 bottom left etc)
+// Draw rectangle was meant to highlight current cell but would require redrawing over previous cells and thats a nightmare i dont have time to deal with
+// It was also not drawing correctly lmao. a bit off centre, prob an easy fix
+int check_current_cell() {
+	if (isInside(c1.top_left.x, c1.top_left.y, (c1.top_right.x - c1.top_left.x), (c1.bottom_left.y - c1.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 1;
+		//drawRectangle(c1.top_left.x - 5, c1.top_left.y - 5, ((c1.top_right.x - c1.top_left.x) - 5), ((c1.bottom_left.y - c1.top_left.y) - 5), 0xFFFF00);
+	}
+	else if (isInside(c2.top_left.x, c2.top_left.y, (c2.top_right.x - c2.top_left.x), (c2.bottom_left.y - c2.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 2;
+		//drawRectangle(c2.top_left.x - 5, c2.top_left.y - 5, ((c2.top_right.x - c2.top_left.x) - 5), ((c2.bottom_left.y - c2.top_left.y) - 5), 0xFFFF00);
+	}
+	else if (isInside(c3.top_left.x, c3.top_left.y, (c3.top_right.x - c3.top_left.x), (c3.bottom_left.y - c3.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 3;
+		//drawRectangle(c3.top_left.x - 5, c3.top_left.y - 5, ((c3.top_right.x - c3.top_left.x) - 5), ((c3.bottom_left.y - c3.top_left.y) - 5), 0xFFFF00);
+	}
+	else if (isInside(c4.top_left.x, c4.top_left.y, (c4.top_right.x - c4.top_left.x), (c4.bottom_left.y - c4.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 4;
+		//drawRectangle(c4.top_left.x - 5, c4.top_left.y - 5, ((c4.top_right.x - c4.top_left.x) - 5), ((c4.bottom_left.y - c4.top_left.y) - 5), 0xFFFF00);
+	}
+	else if (isInside(c5.top_left.x, c5.top_left.y, (c5.top_right.x - c5.top_left.x), (c5.bottom_left.y - c5.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 5;
+		//drawRectangle(c5.top_left.x - 5, c5.top_left.y - 5, ((c5.top_right.x - c5.top_left.x) - 5), ((c5.bottom_left.y - c5.top_left.y) - 5), 0xFFFF00);
+	}
+	else if (isInside(c6.top_left.x, c6.top_left.y, (c6.top_right.x - c6.top_left.x), (c6.bottom_left.y - c6.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 6;
+		//drawRectangle(c6.top_left.x - 5, c6.top_left.y - 5, ((c6.top_right.x - c6.top_left.x) - 5), ((c6.bottom_left.y - c6.top_left.y) - 5), 0xFFFF00);
+	}
+	else if (isInside(c7.top_left.x, c7.top_left.y, (c7.top_right.x - c7.top_left.x), (c7.bottom_left.y - c7.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 7;
+		//drawRectangle(c7.top_left.x - 5, c7.top_left.y - 5, ((c7.top_right.x - c7.top_left.x) - 5), ((c7.bottom_left.y - c7.top_left.y) - 5), 0xFFFF00);
+	}
+	else if (isInside(c8.top_left.x, c8.top_left.y, (c8.top_right.x - c8.top_left.x), (c8.bottom_left.y - c8.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 8;
+		//drawRectangle(c8.top_left.x - 5, c8.top_left.y - 5, ((c8.top_right.x - c8.top_left.x) - 5), ((c8.bottom_left.y - c8.top_left.y) - 5), 0xFFFF00);
+	}
+	else if (isInside(c9.top_left.x, c9.top_left.y, (c9.top_right.x - c9.top_left.x), (c9.bottom_left.y - c9.top_left.y), p.location.x, p.location.y)) {
+		current_cell = 9;
+		//drawRectangle(c9.top_left.x - 5, c9.top_left.y - 5, ((c9.top_right.x - c9.top_left.x) - 5), ((c9.bottom_left.y - c9.top_left.y) - 5), 0xFFFF00);
+	}
+
+	return 0;
+}
+
+// Returns 1 if win
+int check_win() {
+	// Vertical win conditions
+	if (c1.symbol == c4.symbol == c7.symbol) {
+		return 1;
+	}
+	else if (c2.symbol == c5.symbol == c8.symbol) {
+		return 1;
+	}
+	else if (c3.symbol == c6.symbol == c9.symbol) {
+		return 1;
+	}
+	// Horizontal win conditions
+	else if (c1.symbol == c2.symbol == c3.symbol) {
+		return 1;
+	}
+	else if (c4.symbol == c5.symbol == c6.symbol) {
+		return 1;
+	}
+	else if (c7.symbol == c8.symbol == c9.symbol) {
+		return 1;
+	}
+	// Diagonal win conditions
+	else if (c1.symbol == c5.symbol == c9.symbol) {
+		return 1;
+	}
+	else if (c3.symbol == c5.symbol == c7.symbol) {
+		return 1;
+	}
+	return 0;
 }
