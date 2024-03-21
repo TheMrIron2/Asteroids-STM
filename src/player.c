@@ -5,6 +5,7 @@
 #include "display.h"
 #include "player.h"
 
+// Used for screen wrapping, increasing this value makes the edges of the screen seem further in
 #define player_hitbox 10
 
 void init_player(struct player* p) {
@@ -12,9 +13,10 @@ void init_player(struct player* p) {
 	int i = 0;
 	struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 
+	// Declares initial values for the player, including starting symbol and starting position.
 	p->symbol = 'X';
-	p->location.x = 50;
-	p->location.y = 50;
+	p->location.x = SCREEN_CENTRE_X;
+	p->location.y = SCREEN_CENTRE_Y;
 	p->velocity.x = 0;
 	p->velocity.y = 0;
 	p->obj_vert[0].x = 0;
@@ -44,6 +46,7 @@ void apply_force(struct vector2d* velocity, struct vector2d v) {
 struct vector2d get_direction(struct player* p) {
 
 	struct vector2d direction = p->obj_vert[0];
+	// We need to normalise the vector so that we get consistent results
 	normalise_vector(&direction);
 
 	return direction;
@@ -65,6 +68,7 @@ void draw_player(struct player* p) {
 
 void update_player(struct player* p) {
 	
+	// Limits how fast you can go and then adds velocity
 	limit_vector(&p->velocity, 3);
 	add_vector(&p->location, &p->velocity);
 	
