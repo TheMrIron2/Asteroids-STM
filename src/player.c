@@ -65,7 +65,7 @@ void draw_player(struct player* p) {
 
 void update_player(struct player* p) {
 	
-	limit_vector(&p->velocity, 2);
+	limit_vector(&p->velocity, 3);
 	add_vector(&p->location, &p->velocity);
 	
 	int i = 0; 

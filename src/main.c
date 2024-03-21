@@ -229,7 +229,9 @@ int main()
 		// Current player, to be replaced by external indicator i think
 		printText(&p.symbol, 10, 10, RGBToWord(255, 255, 255), 0);
 
-		if (check_win()) {
+		printNumber(check_win(), 10, 10, RGBToWord(255, 255, 255), 0);
+		if (check_win) {
+			// Restart game loop
 			printTextX2("A player wins!", 10, 60, RGBToWord(255, 255, 255), 0);
 		}
 		
@@ -383,34 +385,35 @@ int check_current_cell() {
 // Returns 1 if win
 int check_win() {
 	// Vertical win conditions
-	if ((c1.symbol == c4.symbol) == c7.symbol && c1.symbol != ' ') {
+	if (c1.symbol == c4.symbol && c1.symbol == c7.symbol && c1.symbol != ' ') {
 		return 1;
 	}
-	else if ((c2.symbol == c5.symbol) == c8.symbol && c5.symbol != ' ') {
-		printNumberX2(5, 10, 60, RGBToWord(255, 255, 255), 0);
+	else if (c2.symbol == c5.symbol && c2.symbol == c8.symbol && c5.symbol != ' ') {
 		return 1;
 	}
-	else if ((c3.symbol == c6.symbol) == c9.symbol && c3.symbol != ' ') {
+	else if (c3.symbol == c6.symbol && c3.symbol == c9.symbol && c3.symbol != ' ') {
 		return 1;
 	}
 	// Horizontal win conditions
-	else if ((c1.symbol == c2.symbol) == c3.symbol && c1.symbol != ' ') {
+	else if (c1.symbol == c2.symbol && c1.symbol == c3.symbol && c1.symbol != ' ') {
 		return 1;
 	}
-	else if ((c4.symbol == c5.symbol) == c6.symbol && c5.symbol != ' ') {
+	else if (c4.symbol == c5.symbol && c4.symbol == c6.symbol && c5.symbol != ' ') {
 		return 1;
 	}
-	else if ((c7.symbol == c8.symbol) == c9.symbol && c7.symbol != ' ') {
+	else if (c7.symbol == c8.symbol && c7.symbol == c9.symbol && c7.symbol != ' ') {
 		return 1;
 	}
 	// Diagonal win conditions
-	else if ((c1.symbol == c5.symbol) == c9.symbol && c1.symbol != ' ') {
+	else if (c1.symbol == c5.symbol && c1.symbol == c9.symbol && c1.symbol != ' ') {
 		return 1;
 	}
-	else if ((c3.symbol == c5.symbol) == c7.symbol && c5.symbol != ' ') {
+	else if (c3.symbol == c5.symbol && c3.symbol == c7.symbol && c5.symbol != ' ') {
 		return 1;
 	}
-	return 0;
+	else {
+		return 0;
+	}
 }
 
 void switch_symbol() {
