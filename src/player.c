@@ -94,12 +94,6 @@ void update_player(struct player* p) {
 		
 	}
 
-	if (p->symbol == 'X') {
-		p->symbol = 'O';
-	}
-	else {
-		p->symbol = 'X';
-	}
 }
 
 // Rotates player

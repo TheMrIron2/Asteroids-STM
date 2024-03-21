@@ -18,14 +18,13 @@ void setupIO();
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py);
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
+void switch_symbol();
+int check_win();
 
 volatile uint32_t milliseconds;
 
 // The player
 struct player p;
-
-// Current cell number 1 -> 9, 0 if not in a cell
-int current_cell = 0;
 
 // The cells
 struct cell c1, c2, c3, c4, c5, c6, c7, c8, c9;
@@ -40,6 +39,9 @@ int main()
 	init_player(&p);
 
 	bool menu = 1;
+
+	// Current cell number 1 -> 9, 0 if not in a cell
+	int current_cell = 0;
 
 	// Populates cells with information, yes I know it's a nightmare yes I hate myself.
 	c1.centre = (struct position){(SCREEN_CENTRE_X - CELL_SIZE), (SCREEN_CENTRE_Y - CELL_SIZE)};
@@ -133,7 +135,7 @@ int main()
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
 			rotate_player(&p, 6);
-			playNote(440);
+			playNote(4400);
 			
 		}
 		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
@@ -146,32 +148,60 @@ int main()
 				// Do nothing
 			}
 			else if (current_cell == 1) {
-				c1.symbol = p.symbol;
+				if (c1.symbol == ' ') {
+					c1.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
 			else if (current_cell == 2) {
-				c2.symbol = p.symbol;
+				if (c2.symbol == ' ') {
+					c2.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
 			else if (current_cell == 3) {
-				c3.symbol = p.symbol;
+				if (c3.symbol == ' ') {
+					c3.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
 			else if (current_cell == 4) {
-				c4.symbol = p.symbol;
+				if (c4.symbol == ' ') {
+					c4.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
 			else if (current_cell == 5) {
-				c5.symbol = p.symbol;
+				if (c5.symbol == ' ') {
+					c5.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
 			else if (current_cell == 6) {
-				c6.symbol = p.symbol;
+				if (c6.symbol == ' ') {
+					c6.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
 			else if (current_cell == 7) {
-				c7.symbol = p.symbol;
+				if (c7.symbol == ' ') {
+					c7.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
 			else if (current_cell == 8) {
-				c8.symbol = p.symbol;
+				if (c8.symbol == ' ') {
+					c8.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
 			else if (current_cell == 9) {
-				c9.symbol = p.symbol;
+				if (c9.symbol == ' ') {
+					c9.symbol = p.symbol;
+					switch_symbol();
+				}
 			}
+
 		}
 		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
 		{			
@@ -182,7 +212,6 @@ int main()
 
 		update_player(&p);
 		bounds_player(&p);
-		current_cell = check_current_cell();
 
 		// Draws player to screen
 		draw_player(&p);
@@ -196,6 +225,13 @@ int main()
 		draw_symbol(&c7);
 		draw_symbol(&c8);
 		draw_symbol(&c9);
+
+		// Current player, to be replaced by external indicator i think
+		printText(&p.symbol, 10, 10, RGBToWord(255, 255, 255), 0);
+
+		if (check_win()) {
+			printTextX2("A player wins!", 10, 60, RGBToWord(255, 255, 255), 0);
+		}
 		
 		// Adds slight delay so that the game doesnt run like its on steroids
 		delay(30);
@@ -302,42 +338,42 @@ void setupIO()
 
 // Function returns 0 if not in a cell, 1 -> 9 being cell numbers (3 top right, 7 bottom left etc)
 // Draw rectangle was meant to highlight current cell but would require redrawing over previous cells and thats a nightmare i dont have time to deal with
-// It was also not drawing correctly lmao. a bit off centre, prob an easy fix
+// It was also not drawing correctly lmao. a bit off centre, prob an easy fix somewhere if i went to look for it
 int check_current_cell() {
 	if (isInside(c1.top_left.x, c1.top_left.y, (c1.top_right.x - c1.top_left.x), (c1.bottom_left.y - c1.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 1;
+		return 1;
 		//drawRectangle(c1.top_left.x - 5, c1.top_left.y - 5, ((c1.top_right.x - c1.top_left.x) - 5), ((c1.bottom_left.y - c1.top_left.y) - 5), 0xFFFF00);
 	}
 	else if (isInside(c2.top_left.x, c2.top_left.y, (c2.top_right.x - c2.top_left.x), (c2.bottom_left.y - c2.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 2;
+		return 2;
 		//drawRectangle(c2.top_left.x - 5, c2.top_left.y - 5, ((c2.top_right.x - c2.top_left.x) - 5), ((c2.bottom_left.y - c2.top_left.y) - 5), 0xFFFF00);
 	}
 	else if (isInside(c3.top_left.x, c3.top_left.y, (c3.top_right.x - c3.top_left.x), (c3.bottom_left.y - c3.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 3;
+		return 3;
 		//drawRectangle(c3.top_left.x - 5, c3.top_left.y - 5, ((c3.top_right.x - c3.top_left.x) - 5), ((c3.bottom_left.y - c3.top_left.y) - 5), 0xFFFF00);
 	}
 	else if (isInside(c4.top_left.x, c4.top_left.y, (c4.top_right.x - c4.top_left.x), (c4.bottom_left.y - c4.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 4;
+		return 4;
 		//drawRectangle(c4.top_left.x - 5, c4.top_left.y - 5, ((c4.top_right.x - c4.top_left.x) - 5), ((c4.bottom_left.y - c4.top_left.y) - 5), 0xFFFF00);
 	}
 	else if (isInside(c5.top_left.x, c5.top_left.y, (c5.top_right.x - c5.top_left.x), (c5.bottom_left.y - c5.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 5;
+		return 5;
 		//drawRectangle(c5.top_left.x - 5, c5.top_left.y - 5, ((c5.top_right.x - c5.top_left.x) - 5), ((c5.bottom_left.y - c5.top_left.y) - 5), 0xFFFF00);
 	}
 	else if (isInside(c6.top_left.x, c6.top_left.y, (c6.top_right.x - c6.top_left.x), (c6.bottom_left.y - c6.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 6;
+		return 6;
 		//drawRectangle(c6.top_left.x - 5, c6.top_left.y - 5, ((c6.top_right.x - c6.top_left.x) - 5), ((c6.bottom_left.y - c6.top_left.y) - 5), 0xFFFF00);
 	}
 	else if (isInside(c7.top_left.x, c7.top_left.y, (c7.top_right.x - c7.top_left.x), (c7.bottom_left.y - c7.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 7;
+		return 7;
 		//drawRectangle(c7.top_left.x - 5, c7.top_left.y - 5, ((c7.top_right.x - c7.top_left.x) - 5), ((c7.bottom_left.y - c7.top_left.y) - 5), 0xFFFF00);
 	}
 	else if (isInside(c8.top_left.x, c8.top_left.y, (c8.top_right.x - c8.top_left.x), (c8.bottom_left.y - c8.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 8;
+		return 8;
 		//drawRectangle(c8.top_left.x - 5, c8.top_left.y - 5, ((c8.top_right.x - c8.top_left.x) - 5), ((c8.bottom_left.y - c8.top_left.y) - 5), 0xFFFF00);
 	}
 	else if (isInside(c9.top_left.x, c9.top_left.y, (c9.top_right.x - c9.top_left.x), (c9.bottom_left.y - c9.top_left.y), p.location.x, p.location.y)) {
-		current_cell = 9;
+		return 9;
 		//drawRectangle(c9.top_left.x - 5, c9.top_left.y - 5, ((c9.top_right.x - c9.top_left.x) - 5), ((c9.bottom_left.y - c9.top_left.y) - 5), 0xFFFF00);
 	}
 
@@ -347,31 +383,41 @@ int check_current_cell() {
 // Returns 1 if win
 int check_win() {
 	// Vertical win conditions
-	if (c1.symbol == c4.symbol == c7.symbol) {
+	if ((c1.symbol == c4.symbol) == c7.symbol && c1.symbol != ' ') {
 		return 1;
 	}
-	else if (c2.symbol == c5.symbol == c8.symbol) {
+	else if ((c2.symbol == c5.symbol) == c8.symbol && c5.symbol != ' ') {
+		printNumberX2(5, 10, 60, RGBToWord(255, 255, 255), 0);
 		return 1;
 	}
-	else if (c3.symbol == c6.symbol == c9.symbol) {
+	else if ((c3.symbol == c6.symbol) == c9.symbol && c3.symbol != ' ') {
 		return 1;
 	}
 	// Horizontal win conditions
-	else if (c1.symbol == c2.symbol == c3.symbol) {
+	else if ((c1.symbol == c2.symbol) == c3.symbol && c1.symbol != ' ') {
 		return 1;
 	}
-	else if (c4.symbol == c5.symbol == c6.symbol) {
+	else if ((c4.symbol == c5.symbol) == c6.symbol && c5.symbol != ' ') {
 		return 1;
 	}
-	else if (c7.symbol == c8.symbol == c9.symbol) {
+	else if ((c7.symbol == c8.symbol) == c9.symbol && c7.symbol != ' ') {
 		return 1;
 	}
 	// Diagonal win conditions
-	else if (c1.symbol == c5.symbol == c9.symbol) {
+	else if ((c1.symbol == c5.symbol) == c9.symbol && c1.symbol != ' ') {
 		return 1;
 	}
-	else if (c3.symbol == c5.symbol == c7.symbol) {
+	else if ((c3.symbol == c5.symbol) == c7.symbol && c5.symbol != ' ') {
 		return 1;
 	}
 	return 0;
+}
+
+void switch_symbol() {
+	if (p.symbol == 'X') {
+		p.symbol = 'O';
+	}
+	else {
+		p.symbol = 'X';
+	}
 }
