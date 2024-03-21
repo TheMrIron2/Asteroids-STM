@@ -108,11 +108,15 @@ int main()
 	c9.symbol = ' ';
 
 	// Title text
-	printTextX2("X's + O's", 10, 10, RGBToWord(0xff,0xff,0), 0);
-	printTextX2("But", 10, 30, RGBToWord(0xff,0xff,0), 0);
-	printTextX2("Worse", 10, 50, RGBToWord(0xff,0xff,0), 0);
-	printText("Press right", 30, 100, RGBToWord(0xff,0xff,0), 0);
-	draw_player(&p);
+	printText(" /$$   /$$", 29, 10, RGBToWord(0xff,0xff,0), 0);
+	printText("| $$  / $$", 29, 20, RGBToWord(0xff,0xff,0), 0);
+	printText("|  $$/ $$/", 29, 30, RGBToWord(0xff,0xff,0), 0);
+	printText(" \\  $$$$/", 29, 40, RGBToWord(0xff,0xff,0), 0);
+	printText("  >$$  $$", 29, 50, RGBToWord(0xff,0xff,0), 0);
+	printText(" /$$/\\  $$", 29, 60, RGBToWord(0xff,0xff,0), 0);
+	printText("| $$  \\ $$", 29, 70, RGBToWord(0xff,0xff,0), 0);
+	printText("|__/  |__/", 29, 80, RGBToWord(0xff,0xff,0), 0);
+	printText("Press right", 29, 120, RGBToWord(0xff,0xff,0), 0);
 
 	while(menu == 1)
 	{
