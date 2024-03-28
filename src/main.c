@@ -212,7 +212,7 @@ int main()
 		{
 			// Applies force to the player to go forward
 			struct vector2d thrust = get_direction(&p);
-			multiply_vector(&thrust, .06);
+			multiply_vector(&thrust, .01);
 			apply_force(&p.velocity, thrust);
 		}
 
@@ -241,11 +241,12 @@ int main()
 
 		if (check_win()) {
 			// Restart game loop
-			printTextX2("A player wins!", 10, 60, RGBToWord(255, 255, 255), 0);
+			printText("A player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
+			quit = 1;
 		}
 		
 		// Adds slight delay so that the game doesnt run like its on steroids
-		delay(30);
+		//delay(30);
 	}
 	return 0;
 }
