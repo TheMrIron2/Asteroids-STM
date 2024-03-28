@@ -12,7 +12,6 @@
 void initClock(void);
 void initSysTick(void);
 void SysTick_Handler(void);
-void delay(volatile uint32_t dly);
 void setupIO();
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py);
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
@@ -38,7 +37,6 @@ int main()
 	initSysTick();
 	setupIO();
 	init_player(&p);
-
 	bool menu = 1;
 
 	// Current cell number 1 -> 9, 0 if not in a cell
@@ -57,7 +55,6 @@ int main()
 			menu = 0;
 			fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 		}
-		delay(50);
 	}
 
 	int quit = 0;
@@ -172,7 +169,7 @@ int main()
 		if (check_win()) {
 			// Restart game loop
 			printText("A player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
-			quit = 1;
+			break;
 		}
 	}
 	return 0;
@@ -218,13 +215,6 @@ void initClock(void)
         RCC->CR |= (1<<24);        
         // set PLL as system clock source 
         RCC->CFGR |= (1<<1);
-}
-
-void delay(volatile uint32_t dly)
-{
-	uint32_t end_time = dly + milliseconds;
-	while(milliseconds != end_time)
-		__asm(" wfi "); // sleep
 }
 
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber)

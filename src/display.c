@@ -20,9 +20,8 @@ static void command(uint8_t cmd);
 static void data(uint8_t data);
 static void ResetLow(void);
 static void ResetHigh(void);
-
-
-
+volatile uint32_t milliseconds;
+void delay(volatile uint32_t dly);
 
 void display_begin()
 {
@@ -620,3 +619,9 @@ uint32_t mystrlen(const char *s)
 	return len;
 }
 
+void delay(volatile uint32_t dly)
+{
+	uint32_t end_time = dly + milliseconds;
+	while(milliseconds != end_time)
+		__asm(" wfi "); // sleep
+}
