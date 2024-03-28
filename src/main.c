@@ -17,7 +17,9 @@ void setupIO();
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py);
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
+
 void switch_symbol();
+void drawTitle();
 int check_win();
 
 volatile uint32_t milliseconds;
@@ -45,15 +47,7 @@ int main()
 	initBoard();
 
 	// Title text
-	printText(" /$$   /$$", 29, 10, RGBToWord(0xff,0xff,0), 0);
-	printText("| $$  / $$", 29, 20, RGBToWord(0xff,0xff,0), 0);
-	printText("|  $$/ $$/", 29, 30, RGBToWord(0xff,0xff,0), 0);
-	printText(" \\  $$$$/", 29, 40, RGBToWord(0xff,0xff,0), 0);
-	printText("  >$$  $$", 29, 50, RGBToWord(0xff,0xff,0), 0);
-	printText(" /$$/\\  $$", 29, 60, RGBToWord(0xff,0xff,0), 0);
-	printText("| $$  \\ $$", 29, 70, RGBToWord(0xff,0xff,0), 0);
-	printText("|__/  |__/", 29, 80, RGBToWord(0xff,0xff,0), 0);
-	printText("Press right", 29, 120, RGBToWord(0xff,0xff,0), 0);
+	drawTitle();
 
 	while(menu == 1)
 	{
@@ -312,6 +306,19 @@ int check_current_cell() {
 	}
 
 	return 0;
+}
+
+void drawTitle()
+{
+	printText(" /$$   /$$", 29, 10, RGBToWord(0xff,0xff,0), 0);
+	printText("| $$  / $$", 29, 20, RGBToWord(0xff,0xff,0), 0);
+	printText("|  $$/ $$/", 29, 30, RGBToWord(0xff,0xff,0), 0);
+	printText(" \\  $$$$/", 29, 40, RGBToWord(0xff,0xff,0), 0);
+	printText("  >$$  $$", 29, 50, RGBToWord(0xff,0xff,0), 0);
+	printText(" /$$/\\  $$", 29, 60, RGBToWord(0xff,0xff,0), 0);
+	printText("| $$  \\ $$", 29, 70, RGBToWord(0xff,0xff,0), 0);
+	printText("|__/  |__/", 29, 80, RGBToWord(0xff,0xff,0), 0);
+	printText("Press right", 29, 120, RGBToWord(0xff,0xff,0), 0);
 }
 
 // Returns 1 if win
