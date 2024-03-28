@@ -3,7 +3,6 @@
 #include <math.h>
 #include <stdbool.h>
 
-//#include "../assets/assets.h"
 #include "musical_notes.h"
 #include "sound.h"
 #include "display.h"
