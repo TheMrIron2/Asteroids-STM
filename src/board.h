@@ -18,4 +18,5 @@ struct cell {
 
 void draw_board();
 void draw_symbol(struct cell* c);
+void initBoard();
 int check_current_cell();
