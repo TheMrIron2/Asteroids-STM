@@ -167,9 +167,16 @@ int main()
 		printText(&p.symbol, 10, 10, RGBToWord(255, 255, 255), 0);
 
 		if (check_win()) {
-			// Restart game loop
-			printText("A player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
-			break;
+			if (p.symbol == 'O')
+			{
+				printText("X player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
+				break;
+			}
+			else if (p.symbol == 'X')
+			{
+				printText("O player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
+				break;
+			}
 		}
 	}
 	return 0;
