@@ -21,6 +21,7 @@ void switch_symbol();
 void drawTitle();
 void render();
 void input(int current_cell);
+void start();
 int check_win();
 
 volatile uint32_t milliseconds;
@@ -33,42 +34,15 @@ struct cell c1, c2, c3, c4, c5, c6, c7, c8, c9;
 
 int main()
 {
-	// Starts clocks and system processes
-	initClock();
-	initSound();
-	initSysTick();
-	setupIO();
-	init_player(&p);
-	bool menu = 1;
-
-	// Current cell number 1 -> 9, 0 if not in a cell
-	int current_cell = 0;
-
-	initBoard();
-	drawTitle();
-
-	while(menu == 1)
-	{
-		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
-		{					
-			menu = 0;
-			fillRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-		}
-	}
+	start();
 
 	int quit = 0;
-
 	while(quit == 0)
 	{
 		// Sets current cell to whatever cell player currently occupies (is 0 if not in any cell)
-		current_cell = check_current_cell();
+		int current_cell = check_current_cell();
 		
 		input(current_cell);
-
-		// Update player's position
-		update_player(&p);
-		// Loops to the other side of the screen if offscreen
-		bounds_player(&p);
 
 		render();
 
@@ -76,9 +50,7 @@ int main()
 			if (p.symbol == 'O')
 			{
 				printText("X player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
-				delay(3000);
-				menu = 1;
-				fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+				quit = 1;
 			}
 			else if (p.symbol == 'X')
 			{
@@ -181,8 +153,38 @@ void setupIO()
 	enablePullUp(GPIOA,8);
 }
 
+void start()
+{
+	// Starts clocks and system processes
+	initClock();
+	initSound();
+	initSysTick();
+	setupIO();
+	init_player(&p);
+	bool menu = 1;
+
+	// Current cell number 1 -> 9, 0 if not in a cell
+	int current_cell = 0;
+
+	initBoard();
+	drawTitle();
+
+	while(menu == 1)
+	{
+		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
+		{					
+			menu = 0;
+			fillRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+		}
+	}
+}
+
 void render()
 {
+		// Update player's position
+		update_player(&p);
+		// Loops to the other side of the screen if offscreen
+		bounds_player(&p);
 		// Draws player to screen
 		draw_player(&p);
 		// Draws the board lines
