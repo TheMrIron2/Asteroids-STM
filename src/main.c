@@ -9,6 +9,9 @@
 #include "player.h"
 #include "board.h"
 
+#define AIRCR_VECTKEY_MASK    ((uint32_t)0x05FA0000)
+#define SYSRESETREQ           ((uint32_t)0x00000004)
+
 void initClock(void);
 void initSysTick(void);
 void SysTick_Handler(void);
@@ -16,6 +19,7 @@ void setupIO();
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py);
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
+
 
 void switch_symbol();
 void drawTitle();
@@ -35,12 +39,15 @@ struct cell c1, c2, c3, c4, c5, c6, c7, c8, c9;
 int main()
 {
 	start();
+	// Current cell number 1 -> 9, 0 if not in a cell
+	int current_cell = 0;
+
 
 	int quit = 0;
 	while(quit == 0)
 	{
 		// Sets current cell to whatever cell player currently occupies (is 0 if not in any cell)
-		int current_cell = check_current_cell();
+		current_cell = check_current_cell();
 		
 		input(current_cell);
 
@@ -50,13 +57,14 @@ int main()
 			if (p.symbol == 'O')
 			{
 				printText("X player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
-				quit = 1;
+				delay(3000);
+				SCB->AIRCR = AIRCR_VECTKEY_MASK | SYSRESETREQ; // reset
 			}
 			else if (p.symbol == 'X')
 			{
 				printText("O player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
-				break;
-				main();
+				delay(3000);
+				SCB->AIRCR = AIRCR_VECTKEY_MASK | SYSRESETREQ; // reset
 			}
 		}
 	}
@@ -162,9 +170,6 @@ void start()
 	setupIO();
 	init_player(&p);
 	bool menu = 1;
-
-	// Current cell number 1 -> 9, 0 if not in a cell
-	int current_cell = 0;
 
 	initBoard();
 	drawTitle();
