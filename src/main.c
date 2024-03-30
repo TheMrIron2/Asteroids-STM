@@ -19,6 +19,8 @@ void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
 void switch_symbol();
 void drawTitle();
+void render();
+void input(int current_cell);
 int check_win();
 
 volatile uint32_t milliseconds;
@@ -43,17 +45,14 @@ int main()
 	int current_cell = 0;
 
 	initBoard();
-
-	// Title text
 	drawTitle();
 
 	while(menu == 1)
 	{
-
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
 			menu = 0;
-			fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+			fillRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 		}
 	}
 
@@ -64,118 +63,28 @@ int main()
 		// Sets current cell to whatever cell player currently occupies (is 0 if not in any cell)
 		current_cell = check_current_cell();
 		
-		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
-		{	
-			rotate_player(&p, 6);
-			playNote(4400);
-			
-		}
-		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
-		{			
-			rotate_player(&p, -6);
-		}
-		if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
-		{
-			if (current_cell == 0) {
-				// Do nothing if not in any cell
-			}
-			// Checks every cell individually and if the cell is blank, fills it with current symbol and switches symbol
-			else if (current_cell == 1) {
-				if (c1.symbol == ' ') {
-					c1.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-			else if (current_cell == 2) {
-				if (c2.symbol == ' ') {
-					c2.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-			else if (current_cell == 3) {
-				if (c3.symbol == ' ') {
-					c3.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-			else if (current_cell == 4) {
-				if (c4.symbol == ' ') {
-					c4.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-			else if (current_cell == 5) {
-				if (c5.symbol == ' ') {
-					c5.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-			else if (current_cell == 6) {
-				if (c6.symbol == ' ') {
-					c6.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-			else if (current_cell == 7) {
-				if (c7.symbol == ' ') {
-					c7.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-			else if (current_cell == 8) {
-				if (c8.symbol == ' ') {
-					c8.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-			else if (current_cell == 9) {
-				if (c9.symbol == ' ') {
-					c9.symbol = p.symbol;
-					switch_symbol();
-				}
-			}
-
-		}
-		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
-		{
-			// Applies force to the player to go forward
-			struct vector2d thrust = get_direction(&p);
-			multiply_vector(&thrust, .01);
-			apply_force(&p.velocity, thrust);
-		}
+		input(current_cell);
 
 		// Update player's position
 		update_player(&p);
 		// Loops to the other side of the screen if offscreen
 		bounds_player(&p);
 
-		// Draws player to screen
-		draw_player(&p);
-		// Draws the board lines
-		draw_board();
-		// Draws every cells current symbol, including if it's blank
-		draw_symbol(&c1);
-		draw_symbol(&c2);
-		draw_symbol(&c3);
-		draw_symbol(&c4);
-		draw_symbol(&c5);
-		draw_symbol(&c6);
-		draw_symbol(&c7);
-		draw_symbol(&c8);
-		draw_symbol(&c9);
-		// Draw current symbol
-		printText(&p.symbol, 10, 10, RGBToWord(255, 255, 255), 0);
+		render();
 
 		if (check_win()) {
 			if (p.symbol == 'O')
 			{
 				printText("X player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
-				break;
+				delay(3000);
+				menu = 1;
+				fillRectangle(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 			}
 			else if (p.symbol == 'X')
 			{
 				printText("O player wins!", 20, 80, RGBToWord(255, 255, 255), 0);
 				break;
+				main();
 			}
 		}
 	}
@@ -272,6 +181,26 @@ void setupIO()
 	enablePullUp(GPIOA,8);
 }
 
+void render()
+{
+		// Draws player to screen
+		draw_player(&p);
+		// Draws the board lines
+		draw_board();
+		// Draws every cells current symbol, including if it's blank
+		draw_symbol(&c1);
+		draw_symbol(&c2);
+		draw_symbol(&c3);
+		draw_symbol(&c4);
+		draw_symbol(&c5);
+		draw_symbol(&c6);
+		draw_symbol(&c7);
+		draw_symbol(&c8);
+		draw_symbol(&c9);
+		// Draw current symbol
+		printText(&p.symbol, 10, 10, RGBToWord(255, 255, 255), 0);
+}
+
 // Function returns 0 if not in a cell, 1 -> 9 being cell numbers (3 top right, 7 bottom left etc)
 int check_current_cell() {
 	if (isInside(c1.top_left.x, c1.top_left.y, (c1.top_right.x - c1.top_left.x), (c1.bottom_left.y - c1.top_left.y), p.location.x, p.location.y)) {
@@ -316,6 +245,89 @@ void drawTitle()
 	printText("| $$  \\ $$", 29, 70, RGBToWord(0xff,0xff,0), 0);
 	printText("|__/  |__/", 29, 80, RGBToWord(0xff,0xff,0), 0);
 	printText("Press right", 29, 120, RGBToWord(0xff,0xff,0), 0);
+}
+
+void input(int current_cell)
+{
+	if ((GPIOB->IDR & (1 << 4))==0) // right pressed
+		{	
+			rotate_player(&p, 6);
+			playNote(4400);
+			
+		}
+		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
+		{			
+			rotate_player(&p, -6);
+		}
+		if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
+		{
+			if (current_cell == 0) {
+				// Do nothing if not in any cell
+			}
+			// Checks every cell individually and if the cell is blank, fills it with current symbol and switches symbol
+			else if (current_cell == 1) {
+				if (c1.symbol == ' ') {
+					c1.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+			else if (current_cell == 2) {
+				if (c2.symbol == ' ') {
+					c2.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+			else if (current_cell == 3) {
+				if (c3.symbol == ' ') {
+					c3.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+			else if (current_cell == 4) {
+				if (c4.symbol == ' ') {
+					c4.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+			else if (current_cell == 5) {
+				if (c5.symbol == ' ') {
+					c5.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+			else if (current_cell == 6) {
+				if (c6.symbol == ' ') {
+					c6.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+			else if (current_cell == 7) {
+				if (c7.symbol == ' ') {
+					c7.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+			else if (current_cell == 8) {
+				if (c8.symbol == ' ') {
+					c8.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+			else if (current_cell == 9) {
+				if (c9.symbol == ' ') {
+					c9.symbol = p.symbol;
+					switch_symbol();
+				}
+			}
+
+		}
+		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
+		{
+			// Applies force to the player to go forward
+			struct vector2d thrust = get_direction(&p);
+			multiply_vector(&thrust, .01);
+			apply_force(&p.velocity, thrust);
+		}
 }
 
 // Returns 1 if win
